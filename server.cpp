@@ -518,7 +518,7 @@ int main(int argc, char **argv)
     // short port = atoi(argv[1]);
 
     //改变进程的工作目录
-    int ret = chdir("/home/ubuntu/test_linux/2.network_programming/9.http_server/");
+    int ret = chdir("./root/");
     if(ret == -1) perr_exit("chdir error");
     //epoll模型跑起来 开始监听
     epollRun(5555);
