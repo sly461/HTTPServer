@@ -1,24 +1,19 @@
-#include <iostream>
-#include "config/config.h"
-
-using namespace std;
+#include "server/httpserver.h"
 
 
 int main(int argc, char *argv[]) {
+
+    if (argc <= 1)
+    {
+        printf("Parameter format：server port\n");
+        return 0;
+    }
+    short port = atoi(argv[1]);
     
-    Config config;
+    HTTPServer server(port);
 
-    HTTPServer server;
-
-    //初始化
-    server.init(config.port);
-
-    //监听
-    server.eventListen();
-
-    cout << "HTTPServer服务器开启------" << endl;
     //运行
-    
+    server.Run();
     
     return 0;
 }
