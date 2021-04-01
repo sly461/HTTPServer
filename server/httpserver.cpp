@@ -1,6 +1,5 @@
 #include "httpserver.h"
 
-using namespace std;
 
 HTTPServer::HTTPServer(short port): m_port(port), m_isClose(false)
 {
