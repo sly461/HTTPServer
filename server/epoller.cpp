@@ -19,7 +19,7 @@ bool Epoller::OperateFd(int op, int fd, uint32_t events) {
     return 0 == epoll_ctl(m_epollFd, op, fd, &ev);
 }
 
-int Epoller::Wait(int timeout=5000) {
+int Epoller::Wait(int timeout) {
     return epoll_wait(m_epollFd, &m_events[0], m_events.size(), timeout);
 }
 

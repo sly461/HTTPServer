@@ -20,8 +20,8 @@ public:
     //操作fd 
     //包含添加fd和监听事件到epoll红黑树上、修改fd事件、从epoll上移除fd
     bool OperateFd(int op, int fd, uint32_t events);
-    //调用epoll_wait 默认等待5秒
-    int Wait(int timeout=5000);
+    //调用epoll_wait
+    int Wait(int timeout);
 
     //根据idx得到发生事件的fd和相应的事件
     uint32_t GetEvent(int idx) const;
