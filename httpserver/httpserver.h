@@ -1,18 +1,17 @@
 #ifndef _HTTPSERVER_H_
 #define _HTTPSERVER_H
 
-#include <fcntl.h>  
-#include <unistd.h>      
+#include <fcntl.h>     
 #include <assert.h>
 #include <errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <memory>
-#include <string.h>
 #include <unordered_map>
 
 #include "epoller.h"
+#include "../http/httpconn.h"
 
 class HTTPServer
 {
@@ -34,11 +33,13 @@ private:
 
     //epoll相关
     std::unique_ptr<Epoller> m_epoller;
+    //一个socketfd对应一个HTTPConn对象
+    std::unordered_map<int, HTTPConn> m_users;
 
     bool InitSocket();
-    void DoListen();
-    void DoRead();
-    void DoWrite();
+    void DealListen();
+    void DealRead();
+    void DealWrite();
     
 };
 

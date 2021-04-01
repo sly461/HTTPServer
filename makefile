@@ -1,11 +1,9 @@
-src = $(wildcard *.cpp) # ./src/test.cpp ...
-obj = $(patsubst %.cpp, %, $(src))
+src = $(wildcard ./http/*.cpp ./httpserver/*.cpp *.cpp)
+obj = server
 myArgs = -Wall -g
 
-all:$(obj)
-
-$(obj):%:%.cpp
-	g++ $< -o $@ $(myArgs)
+all:$(src)
+	g++ $(src) -o $(obj) $(myArgs)
 
 clean:
 	-rm -rf $(obj)
