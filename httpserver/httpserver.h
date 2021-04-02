@@ -38,8 +38,9 @@ private:
 
     bool InitSocket();
     void DealListen();
-    void DealRead();
-    void DealWrite();
+    void DealRead(HTTPConn* conn);
+    void DealWrite(HTTPConn* conn);
+    void CloseConn(HTTPConn* conn);
     
 };
 

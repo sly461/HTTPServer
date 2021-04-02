@@ -19,6 +19,10 @@ void HTTPConn::Set(int socketFd, const sockaddr_in& addr) {
     m_isClose = false;
 }
 
+int HTTPConn::GetFd() const {
+    return m_connFd;
+}
+
 void HTTPConn::Close() {
     if(!m_isClose) {
         close(m_connFd);

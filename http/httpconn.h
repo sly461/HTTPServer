@@ -20,6 +20,8 @@ public:
 
     //设置fd和addr 可重复使用该对象
     void Set(int socketfd, const sockaddr_in& addr);
+    //Get
+    int GetFd() const;
     //关闭该连接
     void Close();
 

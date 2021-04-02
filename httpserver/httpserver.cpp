@@ -74,12 +74,19 @@ void HTTPServer::DealListen() {
     } while(1);
 }
 
-void HTTPServer::DealRead() {
+void HTTPServer::DealRead(HTTPConn* conn) {
 
 }
 
-void HTTPServer::DealWrite() {
+void HTTPServer::DealWrite(HTTPConn* conn) {
 
+}
+
+void HTTPServer::CloseConn(HTTPConn* conn) {
+    //从epoll树上摘除
+    m_epoller->OperateFd(EPOLL_CTL_DEL, conn->GetFd(), 0);
+    //关闭fd 关闭连接
+    conn->Close();
 }
 
 void HTTPServer::Run() {
@@ -95,15 +102,15 @@ void HTTPServer::Run() {
             //CloseConn
             //EPOLLHUP 和 EPOLLERR事件不用添加监听 会自动加上
             else if (events & (EPOLLRDHUP | EPOLLHUP | EPOLLERR)) {
-
+                CloseConn(&m_users[fd]);
             }
-            //DoRead
+            //DealRead
             else if(events & EPOLLIN) {
-
+                DealRead(&m_users[fd]);
             }
-            //DoWrite
+            //DealWrite
             else if(events & EPOLLOUT) {
-
+                DealWrite(&m_users[fd]);
             }
         }
     }
