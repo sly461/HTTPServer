@@ -22,6 +22,9 @@ public:
     void Set(int socketfd, const sockaddr_in& addr);
     //Get
     int GetFd() const;
+    int GetPort() const;
+    const char * GetIP() const;
+    sockaddr_in GetAddr() const;
     //关闭该连接
     void Close();
 

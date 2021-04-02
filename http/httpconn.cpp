@@ -23,6 +23,18 @@ int HTTPConn::GetFd() const {
     return m_connFd;
 }
 
+int HTTPConn::GetPort() const {
+    return ntohs(m_addr.sin_port);
+}
+    
+const char * HTTPConn::GetIP() const {
+    return inet_ntoa(m_addr.sin_addr);
+}
+    
+sockaddr_in HTTPConn::GetAddr() const {
+    return m_addr;
+}
+
 void HTTPConn::Close() {
     if(!m_isClose) {
         close(m_connFd);
