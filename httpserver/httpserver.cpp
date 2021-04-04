@@ -1,9 +1,8 @@
 #include "httpserver.h"
 
 
-HTTPServer::HTTPServer(short port, int timeout): 
-    m_port(port), m_isClose(false), m_timeout(timeout), 
-    m_epoller(new Epoller())
+HTTPServer::HTTPServer(short port, int timeout, int threadCnt): 
+    m_port(port), m_isClose(false), m_timeout(timeout), m_threadPool(threadCnt)
 {
     //获取根目录
     m_rootDir = getcwd(nullptr, 256);
@@ -46,9 +45,21 @@ bool HTTPServer::InitSocket() {
     ret = listen(m_listenFd, 6);
     assert(ret >= 0);
     //设置事件到EPOLL上 ET
-    m_epoller->OperateFd(EPOLL_CTL_ADD, m_listenFd, EPOLLRDHUP|EPOLLET|EPOLLIN);
+    m_epoller.OperateFd(EPOLL_CTL_ADD, m_listenFd, EPOLLRDHUP|EPOLLET|EPOLLIN);
     
     return true;
+}
+
+void HTTPServer::OnRead(HTTPConn* conn) {
+
+}
+
+void HTTPServer::OnProcess(HTTPConn* conn) {
+
+}
+    
+void HTTPServer::OnWrite(HTTPConn* conn) {
+
 }
 
 void HTTPServer::DealListen() {
@@ -67,7 +78,7 @@ void HTTPServer::DealListen() {
         //添加事件到epoll树上
         //只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket，
         //需要再次把这个socket加入到EPOLL队列里
-        m_epoller->OperateFd(EPOLL_CTL_ADD, connFd, EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
+        m_epoller.OperateFd(EPOLL_CTL_ADD, connFd, EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
         //添加客户端到m_users
         m_users[connFd].Set(connFd, clientAddr);
 
@@ -75,27 +86,29 @@ void HTTPServer::DealListen() {
 }
 
 void HTTPServer::DealRead(HTTPConn* conn) {
-
+    //添加到线程池
+    m_threadPool.AddTask(std::bind(&OnRead, this, conn));
 }
 
 void HTTPServer::DealWrite(HTTPConn* conn) {
-
+    //添加到线程池
+    m_threadPool.AddTask(std::bind(&OnWrite, this, conn));
 }
 
 void HTTPServer::CloseConn(HTTPConn* conn) {
     //从epoll树上摘除
-    m_epoller->OperateFd(EPOLL_CTL_DEL, conn->GetFd(), 0);
+    m_epoller.OperateFd(EPOLL_CTL_DEL, conn->GetFd(), 0);
     //关闭fd 关闭连接
     conn->Close();
 }
 
 void HTTPServer::Run() {
     while(!m_isClose) {
-        int eventCnt = m_epoller->Wait(m_timeout);
+        int eventCnt = m_epoller.Wait(m_timeout);
         for(int i=0; i<eventCnt; i++) {
             //处理事件
-            uint32_t events = m_epoller->GetEvent(i);
-            int fd = m_epoller->GetEventFd(i);
+            uint32_t events = m_epoller.GetEvent(i);
+            int fd = m_epoller.GetEventFd(i);
             if(fd == m_listenFd) {
                 DealListen();
             }

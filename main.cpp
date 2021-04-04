@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     }
     short port = atoi(argv[1]);
     
-    HTTPServer server(port);
+    HTTPServer server(port, -1, 8);
 
     //运行
     server.Run();

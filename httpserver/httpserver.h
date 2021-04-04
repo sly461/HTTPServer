@@ -12,11 +12,12 @@
 
 #include "epoller.h"
 #include "../http/httpconn.h"
+#include "../pool/threadpool.hpp"
 
 class HTTPServer
 {
 public:
-    HTTPServer(short port, int timeout=-1);
+    HTTPServer(short port, int timeout, int threadCnt);
     ~HTTPServer();
 
     void Run();
@@ -32,16 +33,23 @@ private:
     bool m_isClose;
 
     //epoll相关
-    std::unique_ptr<Epoller> m_epoller;
+    Epoller m_epoller;
     //一个socketfd对应一个HTTPConn对象
     std::unordered_map<int, HTTPConn> m_users;
+    //线程池
+    ThreadPool m_threadPool;
 
     bool InitSocket();
     void DealListen();
     void DealRead(HTTPConn* conn);
     void DealWrite(HTTPConn* conn);
     void CloseConn(HTTPConn* conn);
+
+    void OnRead(HTTPConn* conn);
+    void OnProcess(HTTPConn* conn);
+    void OnWrite(HTTPConn* conn);
     
+
 };
 
 
