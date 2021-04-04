@@ -1,6 +1,6 @@
-src = $(wildcard ./http/*.cpp ./httpserver/*.cpp *.cpp)
+src = $(wildcard ./http/*.cpp ./httpserver/*.cpp ./pool/*.cpp *.cpp)
 obj = server
-myArgs = -Wall -g
+myArgs = -Wall -g -pthread
 
 all:$(src)
 	g++ $(src) -o $(obj) $(myArgs)

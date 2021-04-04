@@ -51,7 +51,7 @@ bool HTTPServer::InitSocket() {
 }
 
 void HTTPServer::OnRead(HTTPConn* conn) {
-
+    
 }
 
 void HTTPServer::OnProcess(HTTPConn* conn) {
@@ -87,12 +87,12 @@ void HTTPServer::DealListen() {
 
 void HTTPServer::DealRead(HTTPConn* conn) {
     //添加到线程池
-    m_threadPool.AddTask(std::bind(&OnRead, this, conn));
+    m_threadPool.AddTask(std::bind(&HTTPServer::OnRead, this, conn));
 }
 
 void HTTPServer::DealWrite(HTTPConn* conn) {
     //添加到线程池
-    m_threadPool.AddTask(std::bind(&OnWrite, this, conn));
+    m_threadPool.AddTask(std::bind(&HTTPServer::OnWrite, this, conn));
 }
 
 void HTTPServer::CloseConn(HTTPConn* conn) {

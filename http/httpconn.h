@@ -25,6 +25,8 @@ public:
     int GetPort() const;
     const char * GetIP() const;
     sockaddr_in GetAddr() const;
+    //使用buffer read write
+    
     //关闭该连接
     void Close();
 
