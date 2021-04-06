@@ -1,4 +1,4 @@
-src = $(wildcard ./http/*.cpp ./httpserver/*.cpp ./pool/*.cpp *.cpp)
+src = $(wildcard ./*/*.cpp *.cpp)
 obj = server
 myArgs = -Wall -g -pthread
 

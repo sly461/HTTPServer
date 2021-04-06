@@ -13,6 +13,8 @@
 #include <errno.h>      
 #include <string.h>
 
+#include "../buffer/buffer.h"
+
 class HTTPConn {
 public:
     HTTPConn();
@@ -38,6 +40,13 @@ private:
     struct sockaddr_in m_addr;
     
     bool m_isClose;
+
+    struct iovec m_iov[2];
+    int m_iovCnt;
+
+    //读写缓冲区
+    Buffer m_readBuffer;
+    Buffer m_writeBuffer;
 };
 
 #endif

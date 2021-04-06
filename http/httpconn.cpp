@@ -3,7 +3,8 @@
 const char * HTTPConn::ROOTDIR;
 int HTTPConn::userCnt;
 
-HTTPConn::HTTPConn(): m_connFd(-1), m_isClose(true)
+HTTPConn::HTTPConn(): 
+    m_connFd(-1), m_isClose(true)
 {
     bzero(&m_addr, sizeof(m_addr));
 }
