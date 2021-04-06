@@ -18,6 +18,9 @@ public:
     HTTPConn();
     ~HTTPConn();
 
+    static const char * ROOTDIR;
+    static int userCnt;
+
     //设置fd和addr 可重复使用该对象
     void Set(int socketfd, const sockaddr_in& addr);
     //Get
@@ -29,9 +32,6 @@ public:
     
     //关闭该连接
     void Close();
-
-    static const char * ROOTDIR;
-    static int userCnt;
 
 private:
     int m_connFd;
