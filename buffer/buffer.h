@@ -19,6 +19,7 @@ public:
     const char *BeginReadPtr() const;
 
     void HasWritten(size_t len);
+    void HasRead(size_t len);
 
     void Append(const char* str, size_t len);
 

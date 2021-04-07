@@ -81,9 +81,16 @@ ssize_t HTTPConn::Write(int * saveErrno) {
 bool HTTPConn::Process() {
     //没有可读的数据
     if(m_readBuffer.ReadableBytes() <= 0) return false;
+
     //request
     m_httpRequest.Init();
-    
+    if(m_httpRequest.Parse(m_readBuffer)) {
+        //std::cout << m_httpRequest.GetMethod() << " " << m_httpRequest.GetPath() <<  " " <<m_httpRequest.GetVersion() << std::endl;
+    }
+    else {
+
+    }
+
     //response
 
     return true;

@@ -42,6 +42,10 @@ private:
     
     //请求头
     std::unordered_map<std::string, std::string> m_header;
+
+    bool ParseRequestLine(const std::string& line);
+    void ParsePath();
+    void ParseRequestHeader(const std::string& line);
 };
 
 #endif

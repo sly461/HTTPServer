@@ -52,6 +52,10 @@ void Buffer::HasWritten(size_t len) {
     m_writePos += len;
 }
 
+void Buffer::HasRead(size_t len) {
+    m_readPos += len;
+}
+
 void Buffer::Append(const char* str, size_t len) {
     if(WritableBytes() < len) ExpandSpace(len);
     std::copy(str, str+len, BeginWritePtr());
