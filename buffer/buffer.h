@@ -10,7 +10,17 @@ class Buffer {
 public:
     Buffer(int initBufferSize=1024);
     ~Buffer() = default;
+    
+    size_t WritableBytes() const;
+    size_t ReadableBytes() const;
 
+    char *BeginWritePtr();
+    const char *BeginWritePtr() const;
+    const char *BeginReadPtr() const;
+
+    void HasWritten(size_t len);
+
+    void Append(const char* str, size_t len);
 
 private:
     std::vector<char> m_buffer;
@@ -21,6 +31,8 @@ private:
     char *BeginPtr();
     const char *BeginPtr() const;
 
+    //拓展空间
+    void ExpandSpace(size_t len);
 };
 
 

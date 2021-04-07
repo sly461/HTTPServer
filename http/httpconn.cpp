@@ -44,3 +44,42 @@ void HTTPConn::Close() {
         m_isClose = true;
     }
 }
+
+ssize_t HTTPConn::Read(int * saveErrno) {
+    ssize_t len = -1;
+    while(1) {
+        char buf[65535];
+        size_t writable = m_readBuffer.WritableBytes();
+        m_iov[0].iov_base = m_readBuffer.BeginWritePtr();
+        m_iov[0].iov_len = writable;
+        m_iov[1].iov_base = buf;
+        m_iov[1].iov_len = sizeof(buf);
+        m_iovCnt = 2;
+        
+        len = readv(m_connFd, m_iov, m_iovCnt);
+        if(len == 0) break;
+        if(len < 0) {
+            *saveErrno = errno;
+            break;
+        }
+        else if(static_cast<size_t>(len) <= writable)
+            m_readBuffer.HasWritten(static_cast<size_t>(len));
+        else {
+            //readbuffer写满了
+            m_readBuffer.HasWritten(writable);
+            //将buf里的内容转移到readbuffer
+            m_readBuffer.Append(buf, static_cast<size_t>(len)-writable);
+        }
+    }
+    return len;
+}
+    
+ssize_t HTTPConn::Write(int * saveErrno) {
+    
+}
+
+bool HTTPConn::Process() {
+    for(auto i = m_readBuffer.BeginReadPtr(); i!=m_readBuffer.BeginWritePtr(); i++)
+        std::cout << *i;
+    return false;
+}

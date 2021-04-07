@@ -51,11 +51,23 @@ bool HTTPServer::InitSocket() {
 }
 
 void HTTPServer::OnRead(HTTPConn* conn) {
-    
+    int readErrno = 0;
+    ssize_t ret = conn->Read(&readErrno);
+    if(ret <= 0 && readErrno!=EAGAIN) {
+        //关闭socket
+        CloseConn(conn);
+        return;
+    }
+    OnProcess(conn);
 }
 
 void HTTPServer::OnProcess(HTTPConn* conn) {
-
+    //有数据且已将其处理完 挂写事件
+    if(conn->Process())
+        m_epoller.OperateFd(EPOLL_CTL_MOD ,conn->GetFd(), EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLOUT);
+    //没有读到数据 继续读 
+    else
+        m_epoller.OperateFd(EPOLL_CTL_MOD ,conn->GetFd(), EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
 }
     
 void HTTPServer::OnWrite(HTTPConn* conn) {

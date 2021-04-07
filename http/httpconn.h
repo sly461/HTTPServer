@@ -10,8 +10,9 @@
 #include <arpa/inet.h>
 #include <unistd.h> 
 #include <stdlib.h> 
-#include <errno.h>      
+#include <errno.h>
 #include <string.h>
+#include <iostream>
 
 #include "../buffer/buffer.h"
 
@@ -25,13 +26,20 @@ public:
 
     //设置fd和addr 可重复使用该对象
     void Set(int socketfd, const sockaddr_in& addr);
+
     //Get
     int GetFd() const;
     int GetPort() const;
     const char * GetIP() const;
     sockaddr_in GetAddr() const;
+
     //使用buffer read write
-    
+    ssize_t Read(int * saveErrno);
+    ssize_t Write(int * saveErrno);
+
+    //处理读取的数据
+    bool Process();
+
     //关闭该连接
     void Close();
 
