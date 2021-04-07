@@ -3,7 +3,7 @@
  * 也包含一个http请求对象和http响应对象
 **/
 #ifndef _HTTPCONN_H_
-#define _HTTPCONN_H
+#define _HTTPCONN_H_
 
 #include <sys/types.h>
 #include <sys/uio.h>   
@@ -12,9 +12,9 @@
 #include <stdlib.h> 
 #include <errno.h>
 #include <string.h>
-#include <iostream>
 
 #include "../buffer/buffer.h"
+#include "httprequest.h"
 
 class HTTPConn {
 public:
@@ -55,6 +55,9 @@ private:
     //读写缓冲区
     Buffer m_readBuffer;
     Buffer m_writeBuffer;
+
+    //http请求与响应
+    HTTPRequest m_httpRequest;
 };
 
 #endif

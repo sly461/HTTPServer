@@ -79,7 +79,12 @@ ssize_t HTTPConn::Write(int * saveErrno) {
 }
 
 bool HTTPConn::Process() {
-    for(auto i = m_readBuffer.BeginReadPtr(); i!=m_readBuffer.BeginWritePtr(); i++)
-        std::cout << *i;
-    return false;
+    //没有可读的数据
+    if(m_readBuffer.ReadableBytes() <= 0) return false;
+    //request
+    m_httpRequest.Init();
+    
+    //response
+
+    return true;
 }
