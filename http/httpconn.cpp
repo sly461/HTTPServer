@@ -37,6 +37,7 @@ sockaddr_in HTTPConn::GetAddr() const {
 }
 
 void HTTPConn::Close() {
+    m_httpResponse.UnmapFile();
     if(!m_isClose) {
         close(m_connFd);
         userCnt --;

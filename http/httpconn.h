@@ -15,6 +15,7 @@
 
 #include "../buffer/buffer.h"
 #include "httprequest.h"
+#include "httpresponse.h"
 
 class HTTPConn {
 public:
@@ -58,6 +59,7 @@ private:
 
     //http请求与响应
     HTTPRequest m_httpRequest;
+    HTTPResponse m_httpResponse;
 };
 
 #endif
