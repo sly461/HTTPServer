@@ -18,6 +18,10 @@ std::string HTTPRequest::GetMethod() const {
 std::string HTTPRequest::GetPath() const {
     return m_path;
 }
+
+std::string& HTTPRequest::GetPath() {
+    return m_path;
+}
     
 std::string HTTPRequest::GetVersion() const {
     return m_version;

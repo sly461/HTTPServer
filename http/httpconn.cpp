@@ -86,13 +86,17 @@ bool HTTPConn::Process() {
     //request
     m_httpRequest.Init();
     if(m_httpRequest.Parse(m_readBuffer)) {
-        //std::cout << m_httpRequest.GetMethod() << " " << m_httpRequest.GetPath() <<  " " <<m_httpRequest.GetVersion() << std::endl;
+        //std::cout << m_httpRequest.GetMethod() << " " << m_httpRequest.GetPath() <<  " " <<m_httpRequest.GetVersion() << " " << m_httpRequest.IsKeepAlive() <<std::endl;
+        m_httpResponse.Init(ROOTDIR, m_httpRequest.GetPath(), m_httpRequest.IsKeepAlive(), 200);
     }
     else {
-
+        //bad request
+        m_httpResponse.Init(ROOTDIR, m_httpRequest.GetPath(), m_httpRequest.IsKeepAlive(), 400);
     }
 
     //response
+    m_httpResponse.MakeResponse(m_writeBuffer);
+    //line
 
     return true;
 }

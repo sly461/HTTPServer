@@ -18,7 +18,17 @@ public:
     void MakeResponse(Buffer& buffer);
     void UnmapFile();
 
+    char * GetFile();
+    size_t GetFileLen() const;
+
 private:
+    //状态码所对应的状态
+    static const std::unordered_map<int, std::string> CODE_TO_STATUS;
+    //错误码对应的html页面路径
+    static const std::unordered_map<int, std::string> ERRCODE_TO_PATH;
+    //文件后缀对应的content-type
+    static const std::unordered_map<std::string, std::string> SUFFIX_TO_TYPE;
+
     int m_code;
     bool m_isKeepAlive;
 
@@ -28,6 +38,10 @@ private:
     char * m_mmFile;
     struct stat m_mmFileStat;
     
+    void GetErrorHTML();
+    void AddResponseLine(Buffer& buffer);
+    void AddResponseHeader(Buffer& buffer);
+    void AddResponseBody(Buffer& buffer);
 };
 
 #endif

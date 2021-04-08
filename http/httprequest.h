@@ -12,13 +12,6 @@
 
 class HTTPRequest {
 public:
-    //请求行、请求头、请求体
-    enum PARSE_STATE {
-        REQUEST_LINE,
-        REQUEST_HEADER,
-        REQUEST_BODY,
-        FINISH
-    };
     HTTPRequest();
     ~HTTPRequest() = default;
 
@@ -26,6 +19,7 @@ public:
 
     std::string GetMethod() const;
     std::string GetPath() const;
+    std::string& GetPath();
     std::string GetVersion() const;
 
     bool IsKeepAlive() const;
@@ -33,6 +27,13 @@ public:
     bool Parse(Buffer& buffer);
 
 private:
+    //请求行、请求头、请求体
+    enum PARSE_STATE {
+        REQUEST_LINE,
+        REQUEST_HEADER,
+        REQUEST_BODY,
+        FINISH
+    };
     PARSE_STATE m_state;
 
     //方法 路径 版本
