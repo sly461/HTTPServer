@@ -76,7 +76,6 @@ void HTTPResponse::MakeResponse(Buffer& buffer) {
     AddResponseLine(buffer);
     AddResponseHeader(buffer);
     AddResponseBody(buffer);
-    //std::cout << m_rootDir << " " << m_path <<  " " <<m_isKeepAlive << " " << m_code <<std::endl;
 }
     
 void HTTPResponse::UnmapFile() {
@@ -95,14 +94,17 @@ size_t HTTPResponse::GetFileLen() const {
 }
 
 std::string HTTPResponse::GetFileType() {
+    //目录
+    if(S_ISDIR(m_mmFileStat.st_mode)) 
+        return "text/html; charset=utf-8";
     size_t idx = m_path.find_last_of('.');
     //没找到
     if(idx == std::string::npos)
-        return "text/plain";
+        return "text/plain; charset=utf-8";
     std::string suffix = m_path.substr(idx);
     if(SUFFIX_TO_TYPE.count(suffix))
         return SUFFIX_TO_TYPE.find(suffix)->second;
-    return "text/plain";
+    return "text/plain; charset=utf-8";
 }
 
 void HTTPResponse::GetErrorHTML() {
@@ -131,9 +133,64 @@ void HTTPResponse::AddResponseHeader(Buffer& buffer) {
     //Content-type
     buffer.Append("Content-type: " + GetFileType() + "\r\n");
     //Content-length -1表自动计算
-    buffer.Append("Content-length: -1\r\n");
+    //注意最后接一空行
+    buffer.Append("Content-length: -1\r\n\r\n");
 }
 
 void HTTPResponse::AddResponseBody(Buffer& buffer) {
+    //文件 包括400.html 403.html 404.html 
+    if(S_ISREG(m_mmFileStat.st_mode)) {
+        //打开文件 建立映射->将文件映射到内存提高文件的访问速度 
+        int fd = open((m_rootDir+m_path).data(), O_RDONLY);
+        //MAP_PRIVATE 建立一个写入时拷贝的私有映射
+        m_mmFile = (char *)mmap(0, m_mmFileStat.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+        close(fd);
+    }
+    //目录
+    else {
+        AddDirHTML(buffer);
+    }
+}
 
+void HTTPResponse::AddDirHTML(Buffer& buffer) {
+    
+    buffer.Append("<!DOCTYPE html><html>\n");
+    buffer.Append("<head><title>文件服务器</title></head>\n");
+
+    //拼一个html页面 <table></table>
+    buffer.Append("<body><h1>当前目录: " + m_path + "</h1><table>\n");
+    //表头
+    buffer.Append("<tr><th>Name</th><th>Size</th></tr>\n");
+    //目录项二级指针
+    struct dirent** ptr;
+    char dirPath[1024] = {0};
+    strcpy (dirPath, (m_rootDir+m_path).data());
+    int num = scandir(dirPath, &ptr, NULL, alphasort);
+
+    char filepath[1024] = {0};
+    //遍历
+    for(int i=0; i<num; i++) {
+        const char * name = ptr[i]->d_name;
+        
+        //拼接文件的完整路径
+        sprintf(filepath, "%s%s", dirPath, name);
+
+        //获取文件信息
+        struct stat st;
+        stat(filepath, &st);
+        
+        char content[1024] = {0};
+        //文件
+        if(S_ISREG(st.st_mode)) {
+            sprintf(content, "<tr><td><a href=\"%s\">%s</a></td><td>%ld</td></tr>\n",
+                    name, name, (long)st.st_size);
+        }
+        //目录
+        else if(S_ISDIR(st.st_mode)) {
+            sprintf(content, "<tr><td><a href=\"%s/\">%s/</a></td><td>%ld</td></tr>\n",
+                    name, name, (long)st.st_size);
+        }
+        buffer.Append(content);
+    }
+    buffer.Append("</table></body></html>");
 }

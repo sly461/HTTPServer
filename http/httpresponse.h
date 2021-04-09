@@ -4,8 +4,11 @@
 #include <string>
 #include <string.h>
 #include <unordered_map>
+#include <unistd.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <dirent.h>
 
 #include "../buffer/buffer.h"
 
@@ -44,6 +47,8 @@ private:
     void AddResponseLine(Buffer& buffer);
     void AddResponseHeader(Buffer& buffer);
     void AddResponseBody(Buffer& buffer);
+    //目录
+    void AddDirHTML(Buffer& buffer);
 };
 
 #endif

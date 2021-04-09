@@ -26,7 +26,7 @@ public:
     static int userCnt;
 
     //设置fd和addr 可重复使用该对象
-    void Set(int socketfd, const sockaddr_in& addr);
+    void Init(int socketfd, const sockaddr_in& addr);
 
     //Get
     int GetFd() const;
@@ -37,6 +37,11 @@ public:
     //使用buffer read write
     ssize_t Read(int * saveErrno);
     ssize_t Write(int * saveErrno);
+    //要写的字节数
+    size_t ToWriteBytes();
+
+    //是否保持长连接
+    bool IsKeepAlive() const;
 
     //处理读取的数据
     bool Process();

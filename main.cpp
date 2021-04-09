@@ -3,12 +3,13 @@
 
 int main(int argc, char *argv[]) {
 
-    if (argc <= 1)
-    {
-        printf("Parameter format：server port\n");
-        return 0;
-    }
-    short port = atoi(argv[1]);
+    // if (argc <= 1)
+    // {
+    //     printf("Parameter format：server port\n");
+    //     return 0;
+    // }
+    // short port = atoi(argv[1]);
+    short port = 5555;
     
     HTTPServer server(port, -1, 8);
 

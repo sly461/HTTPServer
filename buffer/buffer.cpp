@@ -7,6 +7,12 @@ Buffer::Buffer(int initBufferSize):
 
 }
 
+void Buffer::Recover() {
+    bzero(&m_buffer[0], m_buffer.size());
+    m_readPos = 0;
+    m_writePos = 0;
+}
+
 char *Buffer::BeginPtr() {
     return &*m_buffer.begin();
 }

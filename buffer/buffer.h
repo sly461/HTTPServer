@@ -6,11 +6,14 @@
 
 #include <vector>
 #include <string>
+#include <string.h>
 
 class Buffer {
 public:
     Buffer(int initBufferSize=1024);
     ~Buffer() = default;
+
+    void Recover();
     
     size_t WritableBytes() const;
     size_t ReadableBytes() const;

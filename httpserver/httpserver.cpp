@@ -71,7 +71,24 @@ void HTTPServer::OnProcess(HTTPConn* conn) {
 }
     
 void HTTPServer::OnWrite(HTTPConn* conn) {
-
+    int writeErrno = 0;
+    ssize_t ret = conn->Write(&writeErrno);
+    //传输完成
+    if(conn->ToWriteBytes() == 0) {
+        if(conn->IsKeepAlive()) {
+            //保持长连接 则继续IN事件
+            m_epoller.OperateFd(EPOLL_CTL_MOD, conn->GetFd(), EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
+            return;
+        }
+    }
+    else if(ret < 0) {
+        //继续传输
+        if(writeErrno == EAGAIN) {
+            m_epoller.OperateFd(EPOLL_CTL_MOD, conn->GetFd(), EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLOUT);
+            return;
+        }
+    }
+    CloseConn(conn);
 }
 
 void HTTPServer::DealListen() {
@@ -92,7 +109,7 @@ void HTTPServer::DealListen() {
         //需要再次把这个socket加入到EPOLL队列里
         m_epoller.OperateFd(EPOLL_CTL_ADD, connFd, EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
         //添加客户端到m_users
-        m_users[connFd].Set(connFd, clientAddr);
+        m_users[connFd].Init(connFd, clientAddr);
 
     } while(1);
 }

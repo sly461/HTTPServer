@@ -13,10 +13,14 @@ HTTPConn::~HTTPConn() {
     Close();
 }
 
-void HTTPConn::Set(int socketFd, const sockaddr_in& addr) {
+void HTTPConn::Init(int socketFd, const sockaddr_in& addr) {
     m_connFd = socketFd;
     m_addr = addr;
     userCnt++;
+    bzero(&m_iov, sizeof(m_iov));
+    m_iovCnt = 0;
+    m_readBuffer.Recover();
+    m_writeBuffer.Recover();
     m_isClose = false;
 }
 
@@ -76,7 +80,42 @@ ssize_t HTTPConn::Read(int * saveErrno) {
 }
     
 ssize_t HTTPConn::Write(int * saveErrno) {
-    
+    ssize_t len = -1;
+    while(1) {
+        len = writev(m_connFd, m_iov, m_iovCnt);
+        if(len == 0) break;
+        if(len < 0) {
+            *saveErrno = errno;
+            break;
+        }
+        //传输结束
+        if(ToWriteBytes() == 0) break;
+        else if(len > m_iov[0].iov_len) {
+            m_iov[1].iov_base = m_iov[1].iov_base + (len-m_iov[0].iov_len);
+            m_iov[1].iov_len -= (len-m_iov[0].iov_len);
+            if(m_iov[0].iov_len) {
+                m_writeBuffer.Recover();
+                m_iov[0].iov_len = 0;
+            }
+        }
+        else {
+            m_iov[0].iov_base = m_iov[0].iov_base +len;
+            m_iov[0].iov_len -= len;
+            m_writeBuffer.HasRead(len);
+        }
+    }
+    return len;
+}
+
+size_t HTTPConn::ToWriteBytes() {
+    size_t bytes = 0;
+    for(int i=0; i<m_iovCnt; i++)
+        bytes += m_iov[i].iov_len;
+    return bytes;
+}
+
+bool HTTPConn::IsKeepAlive() const {
+    return m_httpRequest.IsKeepAlive();
 }
 
 bool HTTPConn::Process() {
