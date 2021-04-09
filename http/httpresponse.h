@@ -18,7 +18,7 @@ public:
     void MakeResponse(Buffer& buffer);
     void UnmapFile();
 
-    char * GetFile();
+    char * GetFilePtr();
     size_t GetFileLen() const;
 
 private:
@@ -37,6 +37,8 @@ private:
 
     char * m_mmFile;
     struct stat m_mmFileStat;
+
+    std::string GetFileType();
     
     void GetErrorHTML();
     void AddResponseLine(Buffer& buffer);

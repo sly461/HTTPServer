@@ -96,7 +96,16 @@ bool HTTPConn::Process() {
 
     //response
     m_httpResponse.MakeResponse(m_writeBuffer);
-    //line
+    m_iov[0].iov_base = m_writeBuffer.BeginReadPtr();
+    m_iov[0].iov_len = m_writeBuffer.ReadableBytes();
+    m_iovCnt = 1;
+
+    //文件
+    if(m_httpResponse.GetFileLen()>0 && m_httpResponse.GetFilePtr()) {
+        m_iov[1].iov_base = m_httpResponse.GetFilePtr();
+        m_iov[1].iov_len = m_httpResponse.GetFileLen();
+        m_iovCnt = 2;
+    }
 
     return true;
 }

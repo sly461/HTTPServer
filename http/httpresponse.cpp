@@ -60,14 +60,18 @@ void HTTPResponse::Init(const std::string& rootDir, std::string& path, bool isKe
 }
 
 void HTTPResponse::MakeResponse(Buffer& buffer) {
-    int ret = stat((m_rootDir+m_path).data(), &m_mmFileStat);
-    // 404
-    if(ret < 0) 
-        m_code = 404;
-    //其他组成员没有读权限
-    else if(!(m_mmFileStat.st_mode & S_IROTH))
-        m_code = 403;
-    else m_code = 200;
+    do {
+        if(m_code == 400) break;
+        int ret = stat((m_rootDir+m_path).data(), &m_mmFileStat);
+        // 404
+        if(ret < 0) 
+            m_code = 404;
+        //其他组成员没有读权限
+        else if(!(m_mmFileStat.st_mode & S_IROTH))
+            m_code = 403;
+        else if(m_code == -1)
+            m_code = 200;
+    } while(0);
     GetErrorHTML();
     AddResponseLine(buffer);
     AddResponseHeader(buffer);
@@ -82,12 +86,23 @@ void HTTPResponse::UnmapFile() {
     }
 }
 
-char * HTTPResponse::GetFile() {
+char * HTTPResponse::GetFilePtr() {
     return m_mmFile;
 }
 
 size_t HTTPResponse::GetFileLen() const {
     return m_mmFileStat.st_size;
+}
+
+std::string HTTPResponse::GetFileType() {
+    size_t idx = m_path.find_last_of('.');
+    //没找到
+    if(idx == std::string::npos)
+        return "text/plain";
+    std::string suffix = m_path.substr(idx);
+    if(SUFFIX_TO_TYPE.count(suffix))
+        return SUFFIX_TO_TYPE.find(suffix)->second;
+    return "text/plain";
 }
 
 void HTTPResponse::GetErrorHTML() {
@@ -98,11 +113,25 @@ void HTTPResponse::GetErrorHTML() {
 }
 
 void HTTPResponse::AddResponseLine(Buffer& buffer) {
-
+    std::string status;
+    if(CODE_TO_STATUS.count(m_code))
+        status = CODE_TO_STATUS.find(m_code)->second;
+    std::string line = "HTTP/1.1 " + std::to_string(m_code) + " " + status + "\r\n";
+    buffer.Append(line);
 }
 
 void HTTPResponse::AddResponseHeader(Buffer& buffer) {
-
+    //Connection
+    buffer.Append("Connection: ");
+    if(m_isKeepAlive) {
+        buffer.Append("keep-alive\r\n");
+        buffer.Append("keep-alive: max=6, timeout=120\r\n");
+    }
+    else buffer.Append("close\r\n");
+    //Content-type
+    buffer.Append("Content-type: " + GetFileType() + "\r\n");
+    //Content-length -1表自动计算
+    buffer.Append("Content-length: -1\r\n");
 }
 
 void HTTPResponse::AddResponseBody(Buffer& buffer) {

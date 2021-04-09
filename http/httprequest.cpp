@@ -66,8 +66,8 @@ bool HTTPRequest::Parse(Buffer& buffer) {
     const char CRLF[] = "\r\n";
     if(buffer.ReadableBytes() <= 0) return false;
     while(buffer.ReadableBytes()>0 && m_state!=FINISH) {
-        const char * lineEnd = std::search(buffer.BeginReadPtr(), const_cast<const Buffer&>(buffer).BeginWritePtr(), CRLF, CRLF+2);
-        std::string line(buffer.BeginReadPtr(), lineEnd);
+        const char * lineEnd = std::search(buffer.BeginReadPtr(), buffer.BeginWritePtr(), CRLF, CRLF+2);
+        std::string line(const_cast<const char *>(buffer.BeginReadPtr()), lineEnd);
         switch (m_state)
         {
         case REQUEST_LINE:

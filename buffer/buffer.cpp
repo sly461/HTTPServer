@@ -44,6 +44,10 @@ const char *Buffer::BeginWritePtr() const {
     return BeginPtr() + m_writePos;
 }
 
+char *Buffer::BeginReadPtr() {
+    return BeginPtr() + m_readPos;
+}
+
 const char *Buffer::BeginReadPtr() const {
     return BeginPtr() + m_readPos;
 }
@@ -60,4 +64,8 @@ void Buffer::Append(const char* str, size_t len) {
     if(WritableBytes() < len) ExpandSpace(len);
     std::copy(str, str+len, BeginWritePtr());
     HasWritten(len);
+}
+
+void Buffer::Append(const std::string& str) {
+    Append(str.data(), str.size());
 }

@@ -5,6 +5,7 @@
 #define _BUFFER_H_
 
 #include <vector>
+#include <string>
 
 class Buffer {
 public:
@@ -16,12 +17,14 @@ public:
 
     char *BeginWritePtr();
     const char *BeginWritePtr() const;
+    char *BeginReadPtr();
     const char *BeginReadPtr() const;
 
     void HasWritten(size_t len);
     void HasRead(size_t len);
 
     void Append(const char* str, size_t len);
+    void Append(const std::string& str);
 
 private:
     std::vector<char> m_buffer;
