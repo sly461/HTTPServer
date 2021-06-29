@@ -12,6 +12,7 @@
 #include <stdlib.h> 
 #include <errno.h>
 #include <string.h>
+#include <iostream>
 
 #include "../buffer/buffer.h"
 #include "httprequest.h"

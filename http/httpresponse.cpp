@@ -127,7 +127,7 @@ void HTTPResponse::AddResponseHeader(Buffer& buffer) {
     buffer.Append("Connection: ");
     if(m_isKeepAlive) {
         buffer.Append("keep-alive\r\n");
-        buffer.Append("keep-alive: max=6, timeout=120\r\n");
+        buffer.Append("Keep-Alive: max=6, timeout=120\r\n");
     }
     else buffer.Append("close\r\n");
     //Content-type
@@ -153,7 +153,10 @@ void HTTPResponse::AddResponseBody(Buffer& buffer) {
 }
 
 void HTTPResponse::AddDirHTML(Buffer& buffer) {
-    
+    //将请求"test"文件夹转换为请求"test/"
+    if('/' != m_path[m_path.size()-1])
+        m_path.push_back('/');
+
     buffer.Append("<!DOCTYPE html><html>\n");
     buffer.Append("<head><title>文件服务器</title></head>\n");
 

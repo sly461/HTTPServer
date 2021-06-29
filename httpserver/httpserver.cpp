@@ -45,7 +45,7 @@ bool HTTPServer::InitSocket() {
     ret = listen(m_listenFd, 6);
     assert(ret >= 0);
     //设置事件到EPOLL上 ET
-    m_epoller.OperateFd(EPOLL_CTL_ADD, m_listenFd, EPOLLRDHUP|EPOLLET|EPOLLIN);
+    m_epoller.OperateFd(EPOLL_CTL_ADD, m_listenFd, EPOLLRDHUP|EPOLLIN);
     
     return true;
 }
@@ -94,7 +94,7 @@ void HTTPServer::OnWrite(HTTPConn* conn) {
 void HTTPServer::DealListen() {
     struct sockaddr_in clientAddr;
     socklen_t clientAddrLen = sizeof(clientAddr);
-    //ET模式 必须一次性收完
+    //LT模式
     do {
         int connFd = accept(m_listenFd, (sockaddr *)&clientAddr, &clientAddrLen);
         if(connFd <= 0) break;
@@ -105,13 +105,14 @@ void HTTPServer::DealListen() {
         //ET模式 设置非阻塞
         SetFdNonblock(connFd);
         //添加事件到epoll树上
-        //只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket，
+        //EPOLLONESHOT 只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个socket，
         //需要再次把这个socket加入到EPOLL队列里
         m_epoller.OperateFd(EPOLL_CTL_ADD, connFd, EPOLLRDHUP|EPOLLONESHOT|EPOLLET|EPOLLIN);
         //添加客户端到m_users
         m_users[connFd].Init(connFd, clientAddr);
+        std::cout << "connect--fd:" << connFd << std::endl;
 
-    } while(1);
+    } while(0);
 }
 
 void HTTPServer::DealRead(HTTPConn* conn) {
@@ -129,6 +130,7 @@ void HTTPServer::CloseConn(HTTPConn* conn) {
     m_epoller.OperateFd(EPOLL_CTL_DEL, conn->GetFd(), 0);
     //关闭fd 关闭连接
     conn->Close();
+    std::cout << "close--fd:" << conn->GetFd() << std::endl;
 }
 
 void HTTPServer::Run() {

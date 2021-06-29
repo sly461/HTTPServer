@@ -34,6 +34,7 @@ ThreadPool::~ThreadPool() {
         m_isClose = true;
     }
     m_condition.notify_all();
+    //主控线程回收其他线程
     for(auto &t: m_works) t.join();
 }
 

@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <memory>
 #include <unordered_map>
+#include <iostream>
 
 #include "epoller.h"
 #include "../http/httpconn.h"

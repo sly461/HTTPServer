@@ -39,6 +39,18 @@
         "atomic": "cpp",
         "cstdarg": "cpp",
         "cstddef": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "functional": "cpp",
+        "map": "cpp",
+        "ratio": "cpp",
+        "regex": "cpp",
+        "mutex": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp"
     }
 }

@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <string.h>
+#include <atomic>
 
 class Buffer {
 public:
@@ -32,8 +33,8 @@ public:
 private:
     std::vector<char> m_buffer;
     //是否应该设置atomic？
-    size_t m_readPos;
-    size_t m_writePos;
+    std::atomic<size_t> m_readPos;
+    std::atomic<size_t> m_writePos;
 
     char *BeginPtr();
     const char *BeginPtr() const;
