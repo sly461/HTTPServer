@@ -161,7 +161,7 @@ void HTTPResponse::AddDirHTML(Buffer& buffer) {
     buffer.Append("<head><title>文件服务器</title></head>\n");
 
     //拼一个html页面 <table></table>
-    buffer.Append("<body><h1>当前目录: " + m_path + "</h1><table>\n");
+    buffer.Append("<body><h1>当前目录: " + m_path + "</h1><table width=\"300\">\n");
     //表头
     buffer.Append("<tr><th>Name</th><th>Size</th></tr>\n");
     //目录项二级指针
