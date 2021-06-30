@@ -38,7 +38,7 @@ HTTPServer
 
 - 演示
 
-  <img src="images/演示1.png" style="zoom:67%;" />   <img src="images/演示2.png" style="zoom:67%;" />
+  <img src="images/演示1.png" style="zoom:50%;" />      <img src="images/演示2.png" style="zoom:50%;" />
 
 - [x] 文件根目录root/
 - [x] listenfd和connfd使用LT + ET组合
