@@ -38,7 +38,9 @@ HTTPServer
 
 - 演示
 
-  <img src="images/演示1.png" style="zoom:80%;" />           <img src="images/演示2.png" style="zoom:80%;" />
+  ![](images/微信截图_20210630114730.png)
+
+  ![](images/微信截图_20210630114903.png)
 
 - [x] 文件根目录root/
 - [x] listenfd和connfd使用LT + ET组合
