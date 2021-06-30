@@ -38,7 +38,7 @@ HTTPServer
 
 - 演示
 
-  ![](images/演示1.png)\r\r\r\r\r![](images/演示2.png) 
+  ![](images/演示1.png)       ![](images/演示2.png) 
 
 - [x] 文件根目录root/
 - [x] listenfd和connfd使用LT + ET组合
