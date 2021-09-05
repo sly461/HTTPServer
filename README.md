@@ -49,9 +49,9 @@ HTTPServer
 
 ### 测试环境
 
-- CPU：AMD Ryzen 5 2600
+- CPU：Intel i5-8400（六核心六线程） 
 - 内存：8G
-- linux, ubuntu 16.04, g++ 7.5.0
+- linux, ubuntu 18.04, g++ 7.4.0
 
 ### 测试工具
 
