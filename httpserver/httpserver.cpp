@@ -44,7 +44,7 @@ bool HTTPServer::InitSocket() {
     //设置监听上限
     ret = listen(m_listenFd, 6);
     assert(ret >= 0);
-    //设置事件到EPOLL上 ET
+    //设置事件到EPOLL上 LT
     m_epoller.OperateFd(EPOLL_CTL_ADD, m_listenFd, EPOLLRDHUP|EPOLLIN);
     
     return true;
